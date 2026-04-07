@@ -1,11 +1,6 @@
 {
-  "builds": [
-    {
-      "src": "waiter-subproject/package.json",
-      "use": "@vercel/static-build",
-      "config": {
-        "distDir": "dist"
-      }
-    }
+  "routes": [
+    { "handle": "filesystem" },
+    { "src": "/.*", "dest": "/" }
   ]
 }
