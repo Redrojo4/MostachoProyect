@@ -5,11 +5,12 @@ import api from '../../services/api';
 import { Table, TableStatus } from '../../types';
 import { LogoutIcon, TableIcon } from '../icons';
 
-const TableCard: React.FC<{ table: Table; onSelect: (tableId: string) => void }> = ({ table, onSelect }) => {
+  const TableCard: React.FC<{ table: Table; onSelect: (tableId: string) => void }> = ({ table, onSelect }) => {
   const isOccupied = table.status === TableStatus.OCCUPIED;
   const baseClasses = 'flex h-32 w-full cursor-pointer flex-col items-center justify-center rounded-xl p-4 shadow-lg transition-all duration-300 hover:scale-105';
   const statusClasses = isOccupied ? 'border-amber-700 bg-amber-500 hover:bg-amber-600' : 'border-emerald-700 bg-emerald-500 hover:bg-emerald-600';
   const shapeClasses = table.shape === 'circular' ? 'h-32 w-32 rounded-full' : 'rounded-xl';
+  const navigate = useNavigate();
 
   return (
     <div onClick={() => onSelect(table.id)} className={`${baseClasses} ${statusClasses} ${shapeClasses}`}>
@@ -75,10 +76,18 @@ const WaiterDashboard: React.FC = () => {
           <h1 className="text-3xl font-bold text-slate-800 dark:text-white">Vista de Mesas</h1>
           <p className="text-slate-600 dark:text-slate-300">Bienvenido, {currentUser.name}</p>
         </div>
+              <div className="flex items-center space-x-3">
+        <button
+          onClick={() => navigate('/dashboard')}
+          className="rounded-lg bg-blue-600 px-4 py-2 font-bold text-white hover:bg-blue-700"
+        >
+          📊 Ventas
+        </button>
         <button onClick={logout} className="flex items-center space-x-2 rounded-lg bg-rose-500 px-4 py-2 font-bold text-white transition-colors hover:bg-rose-600">
           <LogoutIcon className="h-5 w-5" />
           <span>Salir</span>
         </button>
+        </div>
       </header>
       <main>
         <div className="grid grid-cols-2 gap-8 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">

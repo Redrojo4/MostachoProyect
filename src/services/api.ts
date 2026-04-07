@@ -32,6 +32,40 @@ const { data, error } = await (withRestaurantFilter(supabase.from('sales').selec
     return (data ?? []).map(mapSaleRow);
   },
 
+  getSalesSummary: async (restaurantId: string) => {
+  const today = new Date().toISOString().split('T')[0];
+
+const { data, error } = await (supabase
+  .from('sales')
+  .select('*')
+  .eq('restaurant_id', restaurantId)
+  .gte('closed_at', today)
+  .lt('closed_at', today + 'T23:59:59') as any);
+
+  handleSupabaseError(error, 'getSalesSummary');
+
+  let efectivo = 0;
+  let tarjeta = 0;
+  let transferencia = 0;
+
+  data?.forEach((sale: any) => {
+    const methods = sale.payment_methods || [];
+
+    methods.forEach((m: any) => {
+      if (m.method === 'Efectivo') efectivo += m.amount;
+      if (m.method === 'Tarjeta') tarjeta += m.amount;
+      if (m.method === 'Transferencia') transferencia += m.amount;
+    });
+  });
+
+  return {
+    efectivo,
+    tarjeta,
+    transferencia,
+    total: efectivo + tarjeta + transferencia,
+  };
+},
+
   getCancellations: async (restaurantId?: string): Promise<Cancellation[]> => {
 const { data, error } = await (withRestaurantFilter(supabase.from('cancellations').select('*'), restaurantId) as any);    handleSupabaseError(error, 'getCancellations');
     return (data ?? []).map(mapCancellationRow);
